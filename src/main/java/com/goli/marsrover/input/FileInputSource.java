@@ -4,7 +4,7 @@ import com.goli.marsrover.exception.InvalidCommandException;
 import com.goli.marsrover.model.*;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,7 @@ public class FileInputSource implements InputSource {
         }
 
         // First line : plateau coordinates
-        String[] plateauParts = line.trim().split("\\s+");
+        String[] plateauParts = line.strip().split("\\s+");
         if (plateauParts.length != 2) {
             throw new IllegalArgumentException("Invalid plateau line: " + line);
         }
@@ -35,8 +35,7 @@ public class FileInputSource implements InputSource {
 
     public List<RoverCommand> getRoverCommands() {
         List<RoverCommand> commands = new ArrayList<>();
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(path.toFile()));
+        try (BufferedReader br = Files.newBufferedReader(path)) {
 
             String line = br.readLine();
             Plateau plateau = createPlateau(line);
@@ -48,7 +47,7 @@ public class FileInputSource implements InputSource {
                 if (positionLine == null) {
                     break;
                 }
-                positionLine = positionLine.trim();
+                positionLine = positionLine.strip();
                 if (positionLine.isEmpty()) {
                     continue;
                 }
@@ -57,7 +56,7 @@ public class FileInputSource implements InputSource {
                 if (commandsLine == null) {
                     throw new IllegalArgumentException("Missing command line for rover");
                 }
-                commandsLine = commandsLine.trim();
+                commandsLine = commandsLine.strip();
 
                 // Initial position of a rover
                 String[] posParts = positionLine.split("\\s+");
