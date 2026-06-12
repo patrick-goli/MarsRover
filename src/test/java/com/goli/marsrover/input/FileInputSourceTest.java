@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class FileInputSourceTest {
 
     @Test
-    void getRoverCommands_parsesKataInputCorrectly() throws URISyntaxException {
+    void getRoverCommands_parsesFileInputCorrectly() throws URISyntaxException {
         var url = getClass().getResource("/input.txt");
         assertNotNull(url, "input.txt not found on classpath");
 

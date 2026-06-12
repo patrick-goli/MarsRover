@@ -19,16 +19,19 @@ public class MissionController {
     }
 
     public static void executeAll(List<RoverCommand> commands) {
-        try {
-            for (RoverCommand command : commands) {
+        int i = 0;
+        for (RoverCommand command : commands) {
+            i++;
+            try {
                 for (Instruction instruction : command.instructions()) {
                     command.rover().move(instruction);
                 }
+            } catch (InvalidPositionException e) {
+                // Stop everything if error
+                log.error("Rover {} : {}", i, e.getMessage());
+                log.error("Stopping Remaining Rovers");
+                break;
             }
-        } catch (InvalidPositionException e) {
-            // Stop everything if error
-            log.error(e.getMessage());
-            log.error("Stopping Mars Rovers");
         }
         // Print final position
         for (RoverCommand command : commands) {

@@ -1,5 +1,49 @@
 ## Architecture
 
+           +---------------------------+
+           |       MarsRoverApp        |
+           |       (main / CLI)        |
+           +-------------+-------------+
+                         |
+                         v
+            +------------+------------+
+            |      FileInputSource    |
+            |   (adapter fichier)     |
+            +------------+------------+
+                         |
+                         v
+            +------------+------------+
+            |    MissionController    |
+            | (orchestrateur métier)  |
+            +------------+------------+
+                         |
+           +-------------+------------------+
+           |   Rovers + Plateau` + Règles   |
+           | (Rover, Plateau, Position,     |
+           |  Direction, Instruction)       |
+           +--------------------------------+
+
+
+com.goli.marsrover
+├── MarsRoverApp          // main, CLI + wiring
+│
+├── input
+│   ├── InputSource       // interface (port de lecture)
+│   └── FileInputSource   // adapter fichier texte
+│
+├── model                 // domaine + orchestration actuelle
+│   ├── Pateau
+│   ├── Position
+│   ├── Direction
+│   ├── Instruction
+│   ├── Rover
+│   ├── MissionController
+│   └── RoverCommand
+│
+└── exception
+    ├── InvalidPositionException
+    └── InvalidCommandException
+
 L'architecture suit une approche **hexagonale** simplifiée :
 
 - **Domaine** (`com.goli.marsrover.model`)  
@@ -8,12 +52,12 @@ L'architecture suit une approche **hexagonale** simplifiée :
     - `Direction`, `Instruction` : enums métier
     - `Position` : coordonnée et orientation d'un rover
     - `Rover` : entité qui sait exécuter des instructions (`L`, `R`, `M`) via un contrôleur
-    - `MissionController` : orchestre les rovers, gère les collisions et la progression séquentielle
+    - `MissionController` : Tour de contrôle : orchestre les rovers, gère les collisions et la progression séquentielle
     - `RoverCommand` : couple un `Rover` et sa liste d'instructions
 
 - **Entrée / Adapters** (`com.goli.marsrover.input`)  
   Adapte des formats d'entrée concrets vers les objets métier :
-    - `InputSource` : interface qui fournit une liste de `RoverCommand`
+    - `InputSource` : interface qui lit une source de données et fournit une liste de `RoverCommand`
     - `FileInputSource` : implémentation qui lit un fichier texte et le parse
 
 - **Exceptions** (`com.goli.marsrover.exception`)
@@ -32,7 +76,7 @@ nouvel adapter `InputSource`.
 
 **Points importants** :
 
-- `Rover` ne connaît pas les autres rovers : il délègue à `MissionController` la vérification des collisions et des
+- `Rover` ne connaît pas les autres rovers ni le plateau : il délègue à `MissionController` la vérification des collisions et des
   bornes.
 - `move` :
     - applique `L` / `R` en modifiant la direction,

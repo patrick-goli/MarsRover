@@ -68,7 +68,7 @@ class MissionControllerTest {
                 InvalidPositionException.class,
                 () -> rover1.move(Instruction.MOVE)
         );
-        assertTrue(ex.getMessage().contains("Move out of bounds"));
+        assertTrue(ex.getMessage().contains("Invalid move"));
 
         // Check the positions remain the same
         assertEquals(1, pos1.getX());

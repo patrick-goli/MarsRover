@@ -25,7 +25,7 @@ public class Rover {
         }
 
         if (!controller.canMoveTo(this, destination.x, destination.y)) {
-            throw new InvalidPositionException("Move out of bounds: (" + destination.x + ", " + destination.y + ")");
+            throw new InvalidPositionException("Invalid move for rover: (" + destination.x + ", " + destination.y + ")");
         }
         controller.updatePosition(this, destination.x, destination.y);
         position.setX(destination.x);
